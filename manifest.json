@@ -1,0 +1,41 @@
+{
+	"manifest_version": 3,
+
+	"name": 			"Autofiller",
+	"description": 		"this is a chrome extension will automatically fillout the bout us page",
+	"version": 			"1.0.0",
+
+	"action": {
+		"default_popup": "popup.html"
+	},
+	
+	  
+	"permissions": [
+		"activeTab", 
+		"storage", 
+		"tabs", 
+		"nativeMessaging", 
+		"scripting", 
+		"windows"
+	],
+   "background": {
+      "service_worker": "background.js"
+
+   },
+   "host_permissions": [
+		"<all_urls>"
+	  ],
+	"web_accessible_resources": [
+		{
+		  "resources": ["scriptings.js"],
+		  "matches": ["<all_urls>"]
+		}
+	],
+  "content_scripts": [
+    {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
