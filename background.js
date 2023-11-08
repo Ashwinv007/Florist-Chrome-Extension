@@ -1,19 +1,22 @@
 // Add an event listener to listen for messages from the popup
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "Start_button_Clicked") {
-    const baseUrls = ["waregramweb.com", "amrcollege.com", "www.testingmcafeesites.com", "www.vulnweb.com"];
-    const subUrls = ["/dbout", "/#about", "/testcat_an.html"];
+    const baseUrls = message.urls; // Use the received 'urls' array
+    const subUrls = ["/dbout", "/contact", "/#contact", ];
     const activeUrls = [];
+    const activeUrlsIndex = [];
 
     const fetchPromises = [];
-
     baseUrls.forEach((baseUrl) => {
       subUrls.forEach((subUrl) => {
-        const fullUrl = `http://${baseUrl}${subUrl}`;
+        const fullUrl = `${baseUrl}${subUrl}`;
         fetchPromises.push(
           fetch(fullUrl)
             .then((response) => {
               if (response.status === 200) {
+                console.log(baseUrls.indexOf(baseUrl))
+                console.log(baseUrl)
+                activeUrlsIndex.push(baseUrls.indexOf(baseUrl))
                 activeUrls.push(fullUrl);
               } else {
                 console.log(`Not Found: ${fullUrl}`);
@@ -30,6 +33,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     Promise.all(fetchPromises)
       .then(() => {
         console.log(activeUrls);
+        console.log(activeUrlsIndex)
 
 
 
@@ -37,9 +41,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           let index = 0;
         
           function openNextUrl() {
+            
             if (index < activeUrls.length) {
               // Print the URL
               console.log(activeUrls[index]);
+              console.log(index)
         
               // Console "Hello"
               console.log('Hello');
@@ -71,7 +77,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                       index++;
                       setTimeout(openNextUrl, 2000); // Introduce a 2-second delay
                     });
-                  }, 10000); // 10 seconds delay before removal
+                  }, 30000); // 10 seconds delay before removal
                 })
                 .catch((error) => {
                   console.error("Error creating window: " + error);
