@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   startButton.addEventListener("click", () => {
     // Send a message to the service worker
-    chrome.runtime.sendMessage({ action: "Start_button_Clicked", urls: urls });
+    chrome.runtime.sendMessage({ action: "Start_button_Clicked", messages: messages, subjects: subjects, urls: urls });
   });
 });
 

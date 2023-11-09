@@ -5,6 +5,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     const subUrls = ["/dbout", "/contact", "/#contact", ];
     const activeUrls = [];
     const activeUrlsIndex = [];
+    const messages = message.messages;
+    const subjects = message.subjects;
+
+    console.log('Messages received:', messages);
+    console.log('Subjects received:', subjects);
 
     const fetchPromises = [];
     baseUrls.forEach((baseUrl) => {
@@ -18,6 +23,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                 console.log(baseUrl)
                 activeUrlsIndex.push(baseUrls.indexOf(baseUrl))
                 activeUrls.push(fullUrl);
+                
               } else {
                 console.log(`Not Found: ${fullUrl}`);
               }
@@ -63,11 +69,25 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                   const tabId = newWindow.tabs[0].id;
                   console.log(tabId)
 
-        
+                  let currentURLDataIndex = activeUrlsIndex[index]
+                  // console.log(messages[currentURLDataIndex])
+                  // console.log(subjects[currentURLDataIndex])
+
+
+                  chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
+                    if (info.status === 'complete' && tabId === newWindow.tabs[0].id) {
+                      chrome.tabs.onUpdated.removeListener(listener);
+    
+                      // Pass messages and subjects to content script
+                      chrome.tabs.sendMessage(tabId, { action: "PassData", message: messages[currentURLDataIndex], subject: subjects[currentURLDataIndex] });
+    
                   chrome.scripting.executeScript({
                     target: { tabId: tabId },
                     files: ["content.js"]
+                    
                   });
+
+
         
                   // Wait for 10 seconds and then remove the window
                   setTimeout(() => {
@@ -78,6 +98,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                       setTimeout(openNextUrl, 2000); // Introduce a 2-second delay
                     });
                   }, 30000); // 10 seconds delay before removal
+                }
+                })
                 })
                 .catch((error) => {
                   console.error("Error creating window: " + error);

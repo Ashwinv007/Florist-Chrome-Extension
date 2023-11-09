@@ -1,5 +1,16 @@
 console.log('HI from CONTENT.JS')
-
+// content.js
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.action === "PassData") {
+      const passedMessage = message.message;
+      const passedSubject = message.subject;
+  
+      console.log('Message received in content.js:', passedMessage);
+      console.log('Subject received in content.js:', passedSubject);
+  
+      // Use the received data as needed in your content script...
+   
+  
 let fields = {
     Name:'',
     Email:'',
@@ -43,8 +54,8 @@ if (!formElement) {
 
 fields.name = 'Check Name';
 fields.email = 'checkemail@example.com';
-fields.subject = 'CheckSubject';
-fields.message = 'Check message';
+fields.subject = passedSubject;
+fields.message = passedMessage;
 fields.EMAIL='check@gmail.com';
 fields.Email='check@gmail.com';
 fields.FIRSTNAME='firstname';
@@ -53,12 +64,12 @@ fields.FirstName='fname';
 fields.FirstName='lname';
 fields.LastName='lname';
 fields.Lastname='lname';
-fields.MESSAGE='samplemssg';
-fields.Message='simplemssg';
+fields.MESSAGE=passedMessage;
+fields.Message=passedMessage;
 fields.NAME='checkname';
 fields.Name='checkname';
-fields.SUBJECT='samplesubject';
-fields.Subject='simplesubject';
+fields.SUBJECT=passedSubject;
+fields.Subject=passedSubject;
 fields.fName='firstname';
 fields.lName='lastname';
 fields.lastName='lastname';
@@ -101,3 +112,7 @@ for (let fieldName in fields) {
 
 
 }
+
+
+}
+});
