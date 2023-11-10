@@ -2,7 +2,7 @@
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message.action === "Start_button_Clicked") {
     const baseUrls = message.urls; // Use the received 'urls' array
-    const subUrls = ["/dbout", "/contact", "/#contact", ];
+    const subUrls = ["/dbout", "/contact", "/#contact", "test-form/"];
     const activeUrls = [];
     const activeUrlsIndex = [];
     const messages = message.messages;
