@@ -80,6 +80,14 @@ if (!formElement) {
           // Set the value to the first option for select dropdown
           element.selectedIndex = 1;
           break;
+           case 'text':
+          // Check if it's empty and set the value
+          if (element.value.trim() === '') {
+            element.value = 'Hello Value';
+            console.log('Text field with required attribute and empty value found');
+            emptyTextFieldFound = true;
+          }
+          break;
 
             // Add more cases for other input types as needed
           }
@@ -167,6 +175,13 @@ for (let fieldName in fields) {
 // }
 // formElement.submit();
 setTimeout(function() {
+
+
+    if (emptyTextFieldFound) {
+        console.log('Value entered into the text field after 5 seconds');
+      } else {
+        console.log('No text field with required attribute and empty value found after 5 seconds');
+      }
     var submitButton = formElement.querySelector('[type="submit"]');
     if (submitButton) {
       submitButton.click();
