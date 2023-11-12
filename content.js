@@ -1,4 +1,6 @@
 console.log('HI from CONTENT.JS')
+
+// let sendStatus= false
 // content.js
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.action === "PassData") {
@@ -186,7 +188,12 @@ setTimeout(function() {
     if (submitButton) {
       submitButton.click();
       console.log('Submit button clicked after 10 seconds');
+      // sendStatus=true
+      chrome.runtime.sendMessage({ action: "submitStatus", value: true,url: window.location.href });
+
     } else {
+      chrome.runtime.sendMessage({ action: "submitStatus", value: false, url: window.location.href });
+
       console.log('No submit button found');
     }
   }, 10000);

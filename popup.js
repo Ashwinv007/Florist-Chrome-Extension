@@ -79,3 +79,32 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+// popup.js
+
+// document.getElementById("downloadButton").addEventListener("click", function () {
+//   // Send a message to background script to download the file
+//   chrome.runtime.sendMessage({ action: "downloadFile" });
+// });
+// Assuming you have a download button with id "downloadButton" in your popup.html
+document.getElementById('downloadButton').addEventListener('click', function () {
+  // Retrieve data from chrome.local storage
+  chrome.storage.local.get({ submissions: [] }, function (result) {
+      var submissions = result.submissions || [];
+
+      // Convert the submissions array to a string
+      var dataAsString = submissions.join('\n');
+
+      // Create a Blob with the data
+      var blob = new Blob([dataAsString], { type: 'text/plain' });
+
+      // Create a download link and trigger a click on it
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'report.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+  });
+});
+
+

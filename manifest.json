@@ -16,7 +16,8 @@
 		"tabs", 
 		"nativeMessaging", 
 		"scripting", 
-		"windows"
+		"windows",
+		"downloads"
 	],
    "background": {
       "service_worker": "background.js"

@@ -177,3 +177,28 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       });
   }
 });
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.action === "submitStatus") {
+        // Assuming you have an index value
+
+        var status = request.value ? "SENT" : "FAILED";
+        var url = request.url
+
+        // Concatenate index, comma, and status
+        var dataToStore = url + ',' + status;
+
+        // Store the data in chrome.local storage
+        chrome.storage.local.get({ submissions: [] }, function (result) {
+            var submissions = result.submissions || [];
+
+            // Add the new data to the submissions array
+            submissions.push(dataToStore);
+
+            // Update the chrome.local storage with the modified submissions array
+            chrome.storage.local.set({ submissions: submissions }, function () {
+                console.log('Data stored in chrome.local storage:', dataToStore);
+            });
+        });
+    }
+});
+
