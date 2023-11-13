@@ -73,13 +73,34 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
                   // console.log(messages[currentURLDataIndex])
                   // console.log(subjects[currentURLDataIndex])
 
-
+                  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+                    if (message.action === "rePassData") {
+                        // Handle the "rePassData" message
+                  
+                        // Assuming you have data to send (messages and subjects arrays)
+                       
+                  
+                        // Assuming you have a mechanism to track the current index
+                       
+                                // Send a message after a 5-second delay
+                                
+                                setTimeout(function () {
+                                    chrome.tabs.sendMessage(tabId, {
+                                        action: "PassData",
+                                        message: messages[currentURLDataIndex],
+                                        subject: subjects[currentURLDataIndex],
+                                        limiter:true
+                                    });
+                                }, 3000);
+                            }
+                          })
                   chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
                     if (info.status === 'complete' && tabId === newWindow.tabs[0].id) {
                       chrome.tabs.onUpdated.removeListener(listener);
     
                       // Pass messages and subjects to content script
-                      chrome.tabs.sendMessage(tabId, { action: "PassData", message: messages[currentURLDataIndex], subject: subjects[currentURLDataIndex] });
+                      chrome.tabs.sendMessage(tabId, { action: "PassData", message: messages[currentURLDataIndex], subject: subjects[currentURLDataIndex],limiter:false
+                    });
     
                   chrome.scripting.executeScript({
                     target: { tabId: tabId },
@@ -201,4 +222,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         });
     }
 });
+
+// background.js
+
 
