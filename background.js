@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     const activeUrlsIndex = [];
     const messages = message.messages;
     const subjects = message.subjects;
-
+    let hasMatchingSubUrl=true
     console.log('Messages received:', messages);
     console.log('Subjects received:', subjects);
 
@@ -19,6 +19,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
           fetch(fullUrl)
             .then((response) => {
               if (response.status === 200) {
+                hasMatchingSubUrl = true;
+
                 console.log(baseUrls.indexOf(baseUrl))
                 console.log(baseUrl)
                 activeUrlsIndex.push(baseUrls.indexOf(baseUrl))
@@ -33,6 +35,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             })
         );
       });
+      if (!hasMatchingSubUrl) {
+        handleFailedUrl(baseUrl);
+      }
     });
 
     // Use Promise.all to wait for all fetch requests to complete
@@ -195,34 +200,110 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       })
       .catch((error) => {
         console.log("Error in Promise.all:", error);
-      });
+      })
   }
 });
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action === "submitStatus") {
-        // Assuming you have an index value
+  if (request.action === "submitStatus") {
+      // Assuming you have an index value
 
-        var status = request.value ? "SENT" : "FAILED";
-        var url = request.url
+      var status = request.value ? "SENT" : "FAILED";
+      var url = request.url;
+      var issue = request.issue;
 
-        // Concatenate index, comma, and status
-        var dataToStore = url + ',' + status;
+      if (issue) {
+          var dataToStore = url + ',' + status + ',' + issue;
+      } else {
+          var dataToStore = url + ',' + status;
+      }
 
-        // Store the data in chrome.local storage
-        chrome.storage.local.get({ submissions: [] }, function (result) {
-            var submissions = result.submissions || [];
+      // Retrieve existing submissions from chrome.local storage
+      chrome.storage.local.get({ submissions: [] }, function (result) {
+          var submissions = result.submissions || [];
 
-            // Add the new data to the submissions array
-            submissions.push(dataToStore);
+          // Check if the data already exists in the submissions array
+          var isDuplicate = submissions.some(function (entry) {
+              return entry === dataToStore;
+          });
 
-            // Update the chrome.local storage with the modified submissions array
-            chrome.storage.local.set({ submissions: submissions }, function () {
-                console.log('Data stored in chrome.local storage:', dataToStore);
-            });
-        });
-    }
+          // If it's not a duplicate, add the new data to the submissions array
+          if (!isDuplicate) {
+              submissions.push(dataToStore);
+
+              // Update the chrome.local storage with the modified submissions array
+              chrome.storage.local.set({ submissions: submissions }, function () {
+                  console.log('Data stored in chrome.local storage:', dataToStore);
+              });
+          } else {
+              console.log('Data is a duplicate and will not be stored:', dataToStore);
+          }
+      });
+  }
 });
+
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//     if (request.action === "submitStatus") {
+//         // Assuming you have an index value
+
+//         var status = request.value ? "SENT" : "FAILED";
+//         var url = request.url
+//         var issue = request.issue
+
+//         if(issue){
+//           var dataToStore = url + ',' + status + ',' +issue;
+//         }else{
+//           var dataToStore = url + ',' + status;
+
+//         }
+
+//         // Concatenate index, comma, and status
+
+//         // Store the data in chrome.local storage
+//         chrome.storage.local.get({ submissions: [] }, function (result) {
+//             var submissions = result.submissions || [];
+
+//             // Add the new data to the submissions array
+//             submissions.push(dataToStore);
+
+//             // Update the chrome.local storage with the modified submissions array
+//             chrome.storage.local.set({ submissions: submissions }, function () {
+//                 console.log('Data stored in chrome.local storage:', dataToStore);
+//             });
+//         });
+//     }
+// });
 
 // background.js
 
 
+function handleFailedUrl(failedUrl){
+  var status = "FAILED";
+      var url = failedUrl
+      var issue = 'OTHER'
+
+          var dataToStore = url + ',' + status + ',' + issue;
+      
+
+      // Retrieve existing submissions from chrome.local storage
+      chrome.storage.local.get({ submissions: [] }, function (result) {
+          var submissions = result.submissions || [];
+
+          // Check if the data already exists in the submissions array
+          var isDuplicate = submissions.some(function (entry) {
+              return entry === dataToStore;
+          });
+
+          // If it's not a duplicate, add the new data to the submissions array
+          if (!isDuplicate) {
+              submissions.push(dataToStore);
+
+              // Update the chrome.local storage with the modified submissions array
+              chrome.storage.local.set({ submissions: submissions }, function () {
+                  console.log('Data stored in chrome.local storage:', dataToStore);
+              });
+          } else {
+              console.log('Data is a duplicate and will not be stored:', dataToStore);
+          }
+      });
+
+}

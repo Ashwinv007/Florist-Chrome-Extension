@@ -57,6 +57,9 @@ if (!formElement) {
   var buttons = document.querySelectorAll('button');
   buttons.forEach(button => {
     if (terms.some(term => button.textContent.toLowerCase().includes(term))) {
+      
+      chrome.runtime.sendMessage({ action: "rePassData"});
+
       button.click();
       foundButton = true;
     }
@@ -76,6 +79,8 @@ if (!formElement) {
     });
 
     if (!foundHref) {
+      chrome.runtime.sendMessage({ action: "submitStatus", value: false,issue:"FORM_NOT_FOUND", url: window.location.href });
+
       console.log('No buttons or hrefs found');
     } 
   }
@@ -99,6 +104,9 @@ if (!formElement) {
   //   }
   // }
     
+  }else{
+    chrome.runtime.sendMessage({ action: "submitStatus", value: false,issue:"FORM_NOT_FOUND", url: window.location.href });
+
   }
   
  
@@ -228,25 +236,60 @@ fields.lname='lastname'
 //         inputField.value = fields[fieldName];
 //     }
 // }
-subjectAdded=false;
+let subjectAdded = false;
+let sendMessage = true;
+let fieldFound = false;
+
 for (let fieldName in fields) {
-  let inputField = formElement.querySelector(`[name="${fieldName}"]`);
-  if (inputField) {
-      inputField.value = fields[fieldName];
-  } else if (fieldName.toLowerCase() === 'subject') {
-      if(!subjectAdded){
-                  // Check variations of "Subject" and use the message field if not found
+  
+    let inputField = formElement.querySelector(`[name="${fieldName}"]`);
+    
+    if (inputField) {
+        inputField.value = fields[fieldName];
+    } else if (fieldName.toLowerCase() === 'subject') {
+        if (!subjectAdded) {
+            // Check variations of "Subject" and use the message field if not found
+            if (!formElement.querySelector('[name*="subject" i]') && !formElement.querySelector('[name*="Subject" i]') && !formElement.querySelector('[name*="SUBJECT" i]')) {
+                fields.message = `${fields.subject}\n\n${fields.message}`;
+                subjectAdded = true;
+            }
+        }
+    } else if (fieldName.toLowerCase() === 'message') {
+        // Check variations of "Message" and log to console if not found
+        if (!formElement.querySelector('[name*="message" i]') && !formElement.querySelector('[name*="Message" i]') && !formElement.querySelector('[name*="MESSAGE" i]')) {
+            console.log('Message tab not present');
+            sendMessage=false;
+            chrome.runtime.sendMessage({ action: "submitStatus", value: false,issue:"MESSAGE_FIELD_NOT_FOUND", url: window.location.href });
 
-          if (!formElement.querySelector('[name*="subject" i]') && !formElement.querySelector('[name*="Subject" i]') && !formElement.querySelector('[name*="SUBJECT" i]')) {
-              fields.message = `${fields.subject}\n\n${fields.message}`;
-              subjectAdded = true;
-          }
+        }
+    }        fieldFound = true;
 
-      }
-      
-      
-  }
+
+
+    
+}if (!fieldFound) {
+  chrome.runtime.sendMessage({ action: "submitStatus", value: false, issue: "NOT_ABLE_TO_IDENTIFY", url: window.location.href });
 }
+
+// subjectAdded=false;
+// for (let fieldName in fields) {
+//   let inputField = formElement.querySelector(`[name="${fieldName}"]`);
+//   if (inputField) {
+//       inputField.value = fields[fieldName];
+//   } else if (fieldName.toLowerCase() === 'subject') {
+//       if(!subjectAdded){
+//                   // Check variations of "Subject" and use the message field if not found
+
+//           if (!formElement.querySelector('[name*="subject" i]') && !formElement.querySelector('[name*="Subject" i]') && !formElement.querySelector('[name*="SUBJECT" i]')) {
+//               fields.message = `${fields.subject}\n\n${fields.message}`;
+//               subjectAdded = true;
+//           }
+
+//       }
+      
+      
+//   }
+// }
 
 // Additional code to fill the message field (if not already filled by "Subject")
 // if (fields.message) {
@@ -264,20 +307,24 @@ setTimeout(function() {
     } else {
       console.log('No text field with required attribute and empty value found after 5 seconds');
     }
-  var submitButton = formElement.querySelector('[type="submit"]');
-  if (submitButton) {
-    console.log('submit button found')
-    submitButton.click();
-    console.log('Submit button clicked after 10 seconds');
-    // sendStatus=true
-    chrome.runtime.sendMessage({ action: "submitStatus", value: true,url: window.location.href });
+    if(sendMessage){
+      var submitButton = formElement.querySelector('[type="submit"]');
+      if (submitButton) {
+        console.log('submit button found')
+        submitButton.click();
+        console.log('Submit button clicked after 10 seconds');
+        // sendStatus=true
+        chrome.runtime.sendMessage({ action: "submitStatus", value: true,url: window.location.href });
+    
+      } else {
+        console.log('submit button not found')
+        chrome.runtime.sendMessage({ action: "submitStatus", value: false,issue:"other", url: window.location.href });
+    
+        console.log('No submit button found');
+      }
 
-  } else {
-    console.log('submit button not found')
-    chrome.runtime.sendMessage({ action: "submitStatus", value: false, url: window.location.href });
-
-    console.log('No submit button found');
-  }
+    }
+ 
 }, 7000);
   console.log('Form submitted');
 
