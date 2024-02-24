@@ -79,20 +79,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
-// popup.js
 
-// document.getElementById("downloadButton").addEventListener("click", function () {
-//   // Send a message to background script to download the file
-//   chrome.runtime.sendMessage({ action: "downloadFile" });
-// });
-// Assuming you have a download button with id "downloadButton" in your popup.html
 document.getElementById('downloadButton').addEventListener('click', function () {
   // Retrieve data from chrome.local storage
-  chrome.storage.local.get({ submissions: [] }, function (result) {
-      var submissions = result.submissions || [];
+  chrome.storage.local.get({ shopData: [] }, function (result) {
+      var shopData = result.shopData || [];
 
-      // Convert the submissions array to a string
-      var dataAsString = submissions.join('\n');
+      // Convert the shopData array to a string
+      var dataAsString = shopData.join('\n');
 
       // Create a Blob with the data
       var blob = new Blob([dataAsString], { type: 'text/plain' });
@@ -108,3 +102,28 @@ document.getElementById('downloadButton').addEventListener('click', function () 
 });
 
 
+document.addEventListener('DOMContentLoaded', function () {
+  var resetButton = document.getElementById('resetButton');
+
+  resetButton.addEventListener('click', function () {
+    // Send a message to background.js to initiate the reset process
+    chrome.runtime.sendMessage({ action: 'resetExtension' });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  var pauseButton = document.getElementById('pauseButton');
+
+  pauseButton.addEventListener('click', function () {
+    // Send a message to background.js to initiate the reset process
+    chrome.runtime.sendMessage({ action: 'pauseExtension' });
+  });
+});
+document.addEventListener('DOMContentLoaded', function () {
+  var resumeButton = document.getElementById('resumeButton');
+
+  resumeButton.addEventListener('click', function () {
+    // Send a message to background.js to initiate the reset process
+    chrome.runtime.sendMessage({ action: 'resumeButton' });
+  });
+});

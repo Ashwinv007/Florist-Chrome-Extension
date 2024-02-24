@@ -5,75 +5,80 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Form</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="popup.css">
   <style>
+    body {
+      height: 400px;
+      width: 500px;
+      margin: 0;
+      background-color: #333; /* Dark background color */
+      color: #fff; /* Light text color */
+      font-family: Arial, sans-serif;
+    }
 
-body {
-	height: 400px;
-	width: 500px;
-	margin: 0px;
-}
-#downloadButton {
-    position: absolute;
-    bottom: 165px;
-    left: 47px;
-    width: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    color: #fff;
-    background: #009688;
-    height: 50px;
-    border-radius: 10px;
-    cursor: pointer;
-}
+    #main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
 
-</style>
+    #first {
+      text-align: center;
+    }
 
+    .btn {
+      padding: 10px;
+      margin: 5px;
+      background-color: #009688; /* Teal color */
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #downloadButton {
+      margin-top: 20px;
+      padding: 7px;
+      padding-top: 2em;
+margin-bottom:1em;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+    }
+
+
+    #watermark {
+      position: relative;
+      margin-top:15em;
+      bottom: 1px;
+      left: 38%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      color: #00FFFF; /* Blue flame-cyan shades */
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body>
-	
-<div id="main">
-	<div id="first">
 
-    <input type="file" id="fileInput">
-   
-			
-			<input id="startButton" name="dsubmit" type="button" value="Start">
-		
-	</div>
-</div>
-	
-	<div id="downloadButton">Download Report</div>
-	
+<body>
+
+  <div id="main">
+    <div id="first">
+      <input class="btn" type="file" id="fileInput">
+      <button class="btn" id="startButton">Start</button>
+      <button class="btn" id="resetButton">Reset Extension</button>
+      <button class="btn" id="pauseButton">Pause</button>
+      <button class="btn" id="resumeButton">Resume</button>
+    </div>
+  </div>
+
+  <div id="downloadButton" class="btn-donate">Download Report</div>
+
+ 
+  <a id="watermark"  href="https://waregramweb.com" target="_blank">Made By Waregram</a>
+
   <script src="popup.js"></script>
 </body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

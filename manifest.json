@@ -1,8 +1,8 @@
 {
 	"manifest_version": 3,
 
-	"name": 			"Autofiller",
-	"description": 		"this is a chrome extension will automatically fillout the bout us page",
+	"name": 			"Auto Sender",
+	"description": 		"Chrome extension to Auto-Send Messages through websites",
 	"version": 			"1.0.0",
 
 	"action": {
@@ -34,9 +34,9 @@
 	],
   "content_scripts": [
     {
-        "matches": ["<all_urls>"],
+      "matches": ["https://www.flowershopnetwork.com/*"],
         "js": ["content.js"],
-      "run_at": "document_end"
+      "run_at": "document_idle"
     }
   ]
 }
